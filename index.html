@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investor Agent Playbook</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #ffffff;
+      --surface:  #f7f7f8;
+      --surface2: #f0f0f2;
+      --surface3: #e8e8ec;
+      --border:   #e0e0e6;
+      --border2:  #d0d0d8;
+      --text:     #111111;
+      --text2:    #555560;
+      --text3:    #999aaa;
+      --accent:   #e84518;
+      --accent2:  #f05a2e;
+      --green:    #178a42;
+      --green2:   #1a9e50;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(160deg, #fff3ee 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      padding: 52px 40px 44px;
+      text-align: center;
+    }
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: clamp(30px, 4vw, 50px);
+      font-weight: 800;
+      letter-spacing: -.025em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    header h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, #e84518, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      font-size: 18px;
+      color: var(--text2);
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+    .header-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .stat-num  { font-size: 34px; font-weight: 800; color: var(--text); }
+    .stat-label { font-size: 13px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ── PROCESS DIAGRAM ── */
+    .diagram-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 36px 32px 28px;
+    }
+    .diagram-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .stage-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .stage-box {
+      flex: 1;
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 16px 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+      position: relative;
+      color: white;
+      text-decoration: none;
+      filter: brightness(0.85) saturate(0.8);
+    }
+    .stage-box:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.5); filter: brightness(1) saturate(1); }
+    .stage-num { font-size: 12px; font-weight: 700; opacity: .7; letter-spacing: .06em; margin-bottom: 6px; }
+    .stage-emoji { font-size: 24px; margin-bottom: 6px; }
+    .stage-name { font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+    .stage-count {
+      font-size: 12px; font-weight: 600;
+      background: rgba(255,255,255,.2);
+      border-radius: 999px; padding: 2px 8px;
+    }
+
+    .stage-arrow {
+      display: flex; align-items: center; padding: 0 4px;
+      color: var(--text3); font-size: 16px; flex-shrink: 0; align-self: center;
+    }
+
+    .support-bars { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .support-bar {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 20px; border-radius: 10px; cursor: pointer;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+      color: white; text-decoration: none;
+      filter: brightness(0.8) saturate(0.7);
+    }
+    .support-bar:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4); filter: brightness(1) saturate(1); }
+    .support-bar-emoji { font-size: 20px; flex-shrink: 0; }
+    .support-bar-name { font-size: 15px; font-weight: 700; flex-shrink: 0; min-width: 120px; }
+    .support-bar-desc { font-size: 14px; opacity: .8; flex: 1; }
+    .support-bar-count {
+      font-size: 13px; font-weight: 700;
+      background: rgba(255,255,255,.2); border-radius: 999px; padding: 3px 10px; flex-shrink: 0;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      margin: 28px 24px 0; padding: 0;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 240px; }
+    .search-wrap svg {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--text3); pointer-events: none;
+    }
+    input[type="search"] {
+      width: 100%; padding: 10px 14px 10px 42px;
+      border: 1px solid var(--border2); border-radius: 10px;
+      font-size: 16px; background: var(--surface2); color: var(--text); outline: none;
+      transition: border .15s, box-shadow .15s;
+    }
+    input[type="search"]::placeholder { color: var(--text3); }
+    input[type="search"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,69,24,.2);
+    }
+    .results-count { font-size: 15px; color: var(--text2); white-space: nowrap; }
+
+    /* ── MAIN ── */
+    main { margin: 28px 24px 80px; padding: 0; }
+
+    /* ── SECTION ── */
+    .section {
+      margin-bottom: 0;
+      padding: 0;
+    }
+    .section-header { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 10px; }
+    .section-count {
+      font-size: 14px; font-weight: 600;
+      color: var(--text3); background: var(--surface3); border-radius: 999px; padding: 3px 10px;
+      border: 1px solid var(--border2);
+    }
+
+    /* ── PIPELINE ARROW ── */
+    .pipeline-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 0;
+      width: 300px;
+    }
+    .pipeline-arrow svg { color: var(--text3); }
+
+    /* ── THREE-COLUMN FLOW LAYOUT ── */
+    .section-flow {
+      display: grid;
+      grid-template-columns: 300px 160px 1fr;
+      gap: 20px 16px;
+      align-items: start;
+    }
+
+    .flow-category {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      align-self: stretch;
+    }
+    .flow-category-inner {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .flow-category-desc {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      color: var(--text2);
+      line-height: 1.4;
+      margin-top: 8px;
+    }
+
+    .flow-group-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 10px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-align: center;
+      align-self: stretch;
+      writing-mode: horizontal-tb;
+    }
+    .flow-group--agent { background: #fff0eb; border: 1px solid #f0a88a; color: #c4380f; }
+    .flow-group--human { background: #e8f8ee; border: 1px solid #90d4a8; color: #147838; }
+
+    .flow-tasks-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      align-items: stretch;
+    }
+    @media (max-width: 1100px) {
+      .flow-tasks-col { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── TASK CARD ── */
+    .task-card {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 10px; overflow: hidden;
+      transition: box-shadow .22s, transform .18s, border-color .18s; cursor: pointer;
+    }
+    .task-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,.4);
+      transform: translateY(-1px);
+    }
+
+    /* Per-group card styling */
+    .flow-tasks--agent .task-card {
+      background: #fff5f0; border-color: #f0a88a;
+    }
+    .flow-tasks--agent .task-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(232,69,24,.15);
+    }
+    .flow-tasks--human .task-card {
+      background: #f0faf4; border-color: #a8dfc0;
+    }
+    .flow-tasks--human .task-card:hover {
+      border-color: var(--green2);
+      box-shadow: 0 4px 20px rgba(26,158,80,.12);
+    }
+
+    .task-card-top {
+      display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px 12px;
+    }
+    /* Title: large, dark — primary level */
+    .task-title {
+      font-size: 16px; font-weight: 700; color: #111111; line-height: 1.4; flex: 1;
+    }
+    .flow-tasks--agent .task-title { color: #c4380f; }
+    .flow-tasks--human .task-title { color: #125e30; }
+
+    .chevron {
+      flex-shrink: 0; width: 15px; height: 15px; color: var(--text3); margin-top: 3px;
+      transition: transform .2s;
+    }
+    .task-card.expanded .chevron { transform: rotate(180deg); }
+    .task-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 14px 16px 16px;
+      background: #f7f7f8;
+    }
+    .task-card.expanded .task-body { display: block; }
+    /* Label: smallest, dimmest — tertiary level */
+    .task-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
+    }
+    /* Description: medium — secondary level */
+    .task-desc { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 14px; }
+    .task-output {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: var(--surface3); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 10px 12px;
+    }
+    .output-icon { font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    /* Output: slightly brighter than desc — secondary-high level */
+    .output-text { font-size: 14px; color: #222222; font-weight: 600; line-height: 1.5; }
+
+    /* ── DIVIDER ── */
+    .support-divider {
+      display: flex; align-items: center; gap: 16px; margin: 48px 0 32px;
+    }
+    .support-divider-line { flex: 1; height: 1px; background: var(--border); }
+    .support-divider-text {
+      font-size: 13px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text3); white-space: nowrap;
+    }
+
+    /* ── HIDDEN / EMPTY ── */
+    .hidden { display: none !important; }
+    .empty-state { text-align: center; padding: 56px 20px; color: var(--text3); }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: var(--text2); }
+    .empty-state p  { font-size: 16px; }
+
+    /* ── NETWORK SECTIONS (light) ── */
+    .page-section--network {
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Grid background pattern — light gray */
+    .page-section--network::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* ── NETWORK GRAPH ── */
+    .network-graph {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .network-canvas {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      perspective: 1200px;
+    }
+    .network-scene {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform: rotateX(8deg);
+    }
+
+    /* SVG connections layer */
+    .network-lines {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: visible;
+    }
+    .network-line {
+      stroke-width: 1.5;
+      fill: none;
+      opacity: .5;
+      filter: blur(0.3px);
+    }
+    .network-line--glow {
+      stroke-width: 4;
+      fill: none;
+      opacity: .15;
+      filter: blur(3px);
+    }
+    /* Animated dash pulse along lines */
+    .network-line-pulse {
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 6 18;
+      opacity: .7;
+      animation: dashPulse 3s linear infinite;
+    }
+    @keyframes dashPulse {
+      to { stroke-dashoffset: -72; }
+    }
+
+    /* Hub node (center) */
+    .network-hub {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      z-index: 10;
+      transition: transform .4s cubic-bezier(.25,.46,.45,.94);
+    }
+    .network-hub::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      opacity: .25;
+      animation: hubPulse 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .network-hub::after {
+      content: '';
+      position: absolute;
+      inset: -40px;
+      border-radius: 50%;
+      opacity: .08;
+      animation: hubPulse 3s ease-in-out infinite .5s;
+      pointer-events: none;
+    }
+    @keyframes hubPulse {
+      0%, 100% { transform: scale(1); opacity: .25; }
+      50% { transform: scale(1.15); opacity: .12; }
+    }
+    .network-hub:hover { transform: scale(1.08); }
+    .network-hub svg { width: 48px; height: 48px; color: white; }
+    .network-hub-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* Outer node (verb pill) */
+    .network-node {
+      position: absolute;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: default;
+    }
+    .network-node:hover .network-node-dot {
+      transform: scale(1.25);
+    }
+    .network-node-dot {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      position: relative;
+      box-shadow: 0 0 20px var(--node-glow), 0 0 60px var(--node-glow-soft), inset 0 1px 0 rgba(255,255,255,.15);
+      border: 1.5px solid var(--node-border);
+      backdrop-filter: blur(8px);
+      transition: transform .3s cubic-bezier(.25,.46,.45,.94);
+    }
+    .network-node-dot::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--node-glow-soft), transparent 70%);
+      opacity: .4;
+      animation: nodePulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes nodePulse {
+      0%, 100% { transform: scale(1); opacity: .4; }
+      50% { transform: scale(1.2); opacity: .2; }
+    }
+    .network-node-label {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111111;
+      white-space: nowrap;
+    }
+    .network-node-sub {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555560;
+      white-space: nowrap;
+    }
+    .network-note {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+      max-width: 480px;
+      margin: -20px auto 0;
+      padding: 14px 20px;
+      border-radius: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Floating particles */
+    .network-particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      opacity: .15;
+      animation: particleFloat linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes particleFloat {
+      0% { transform: translateY(0) translateX(0); opacity: 0; }
+      20% { opacity: .2; }
+      80% { opacity: .2; }
+      100% { transform: translateY(-120px) translateX(30px); opacity: 0; }
+    }
+
+    /* Orbit ring decorations */
+    .network-orbit {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid;
+      opacity: .1;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── WORKFLOW FLOW (dark theme) ── */
+    .workflow-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+      position: relative;
+      z-index: 2;
+    }
+    .workflow-section-label {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .workflow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .workflow-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .workflow-hub-sm {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #e84518, #f05a2e);
+      box-shadow: 0 0 24px rgba(232,69,24,.4), 0 0 60px rgba(232,69,24,.15);
+      color: white;
+      flex-shrink: 0;
+      border: 1px solid rgba(232,69,24,.5);
+    }
+    .workflow-hub-sm svg { width: 34px; height: 34px; }
+    .workflow-hub-sm-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111111;
+      white-space: nowrap;
+    }
+    .workflow-sources {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .workflow-source {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 600;
+      color: #111111;
+      white-space: nowrap;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .workflow-source:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    }
+    .workflow-source-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .workflow-connector {
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+    .workflow-connector svg {
+      color: var(--text3);
+    }
+    .workflow-output-box {
+      padding: 18px 24px;
+      border-radius: 14px;
+      background: #f0faf4;
+      border: 1.5px solid #90d4a8;
+      text-align: center;
+      max-width: 180px;
+      box-shadow: 0 4px 20px rgba(23,138,66,.1);
+    }
+    .workflow-output-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .workflow-output-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #34b866;
+      line-height: 1.3;
+    }
+    .workflow-output-sub {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    /* ── VC LANDSCAPE ── */
+    .vc-landscape {
+      margin: 0;
+      padding: 0 48px 60px;
+    }
+    .vc-landscape-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .vc-landscape-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .vc-landscape-subtitle {
+      font-size: 15px;
+      color: var(--text2);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    .vc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .vc-panel {
+      background: white;
+      border-radius: 16px;
+      border: 1.5px solid var(--border);
+      padding: 28px 28px 24px;
+      transition: transform .15s, box-shadow .15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .vc-panel:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+    }
+    .vc-panel-badge {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: #f0f0f5;
+      color: var(--text2);
+    }
+    .vc-panel-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .vc-panel-tagline {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text3);
+      margin-bottom: 16px;
+      letter-spacing: .02em;
+    }
+    .vc-panel-approach {
+      font-size: 13px;
+      font-weight: 700;
+      color: #c4380f;
+      margin-bottom: 8px;
+      letter-spacing: .02em;
+    }
+    .vc-panel-desc {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .vc-panel-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .vc-panel-highlight {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.4;
+    }
+    .vc-panel-highlight-icon {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .vc-panel-source {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .vc-panel-source a {
+      font-size: 12px;
+      color: #c4380f;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .vc-panel-source a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── SECTION NAV ── */
+    .section-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 0 24px;
+      overflow-x: auto;
+    }
+    .section-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text2);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    .section-nav a:hover {
+      color: var(--text);
+      background: var(--surface);
+    }
+    .section-nav a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .section-nav-num {
+      font-size: 11px;
+      font-weight: 800;
+      background: var(--surface3);
+      color: var(--text3);
+      border-radius: 4px;
+      padding: 1px 6px;
+      letter-spacing: .04em;
+    }
+    .section-nav a.active .section-nav-num {
+      background: #fff0eb;
+      color: var(--accent);
+    }
+
+    /* ── PAGE SECTIONS ── */
+    .page-section {
+      padding: 48px 0 0;
+    }
+    .page-section-header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 0 24px;
+    }
+    .page-section-num {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+    .page-section-title {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .page-section-subtitle {
+      font-size: 15px;
+      color: var(--text2);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── VERB MODAL ── */
+    .verb-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    .verb-modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .verb-modal {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.25);
+      width: 100%;
+      max-width: 720px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px) scale(.97);
+      transition: transform .25s cubic-bezier(.25,.46,.45,.94);
+    }
+    .verb-modal-overlay.open .verb-modal {
+      transform: translateY(0) scale(1);
+    }
+    .verb-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .verb-modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .verb-modal-title .verb-icon { font-size: 24px; }
+    .verb-modal-count {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text3);
+      background: var(--surface3);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .verb-modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text2);
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .verb-modal-close:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+    .verb-modal-body {
+      overflow-y: auto;
+      padding: 16px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .verb-modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .verb-modal-card:hover {
+      border-color: var(--border2);
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .verb-modal-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 16px 12px;
+    }
+    .verb-modal-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+      flex: 1;
+    }
+    .verb-modal-card-stage {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: white;
+      background: #111;
+      padding: 2px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .verb-modal-card .chevron {
+      flex-shrink: 0; width: 14px; height: 14px; color: var(--text3); margin-top: 3px;
+      transition: transform .2s;
+    }
+    .verb-modal-card.expanded .chevron { transform: rotate(180deg); }
+    .verb-modal-card-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 14px 16px 16px;
+      background: white;
+    }
+    .verb-modal-card.expanded .verb-modal-card-body { display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      color: var(--text3); text-align: center; padding: 26px 20px; font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <p class="eyebrow">645 Ventures · Voyager Platform</p>
+  <h1>The Investor <em>Agent Playbook</em></h1>
+  <p>Over the next month, year, and decade: the landscape of venture capital will change entirely. Tasks that were previously human are certainly delegated to agents. For the foreseeable future, this is how we see it break down.</p>
+  <div class="header-stats">
+    <div><div class="stat-num" id="totalCount">101</div><div class="stat-label">Total Tasks</div></div>
+    <div><div class="stat-num">8</div><div class="stat-label">Deal Stages</div></div>
+    <div><div class="stat-num">3</div><div class="stat-label">Ongoing Functions</div></div>
+  </div>
+</header>
+
+<!-- ── SECTION NAV ── -->
+<nav class="section-nav" id="sectionNav">
+  <a href="#sec-framework" data-section="sec-framework" class="active">
+    <span class="section-nav-num">01</span> Investment Process Framework
+  </a>
+  <a href="#sec-breakdown" data-section="sec-breakdown">
+    <span class="section-nav-num">02</span> Investor Process Detailed Breakdown
+  </a>
+  <a href="#sec-human" data-section="sec-human">
+    <span class="section-nav-num">03</span> Human Task Overview
+  </a>
+  <a href="#sec-agent" data-section="sec-agent">
+    <span class="section-nav-num">04</span> Agent Task Overview & Flows
+  </a>
+  <a href="#sec-landscape" data-section="sec-landscape">
+    <span class="section-nav-num">05</span> Competitive Landscape
+  </a>
+</nav>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 1: INVESTMENT PROCESS FRAMEWORK       -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page-section" id="sec-framework">
+  <div class="page-section-header">
+    <div class="page-section-num">Section 01</div>
+    <div class="page-section-title">Investment Process Framework</div>
+    <div class="page-section-subtitle">The end-to-end investment lifecycle — from sourcing through portfolio management — and the ongoing functions that support every stage.</div>
+  </div>
+
+  <div class="diagram-wrap">
+    <p class="diagram-label">Click any stage to jump to its tasks in the detailed breakdown</p>
+
+    <div class="stage-row" id="stageRow">
+      <!-- built by JS -->
+    </div>
+
+    <div class="support-bars" id="supportBars">
+      <!-- built by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 2: INVESTOR PROCESS DETAILED BREAKDOWN -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page-section" id="sec-breakdown">
+  <div class="page-section-header">
+    <div class="page-section-num">Section 02</div>
+    <div class="page-section-title">Investor Process Detailed Breakdown</div>
+    <div class="page-section-subtitle">Every task an investor performs, organized by deal stage, with human and agent responsibilities clearly separated.</div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input type="search" id="search" placeholder="Search tasks, descriptions, outputs…" />
+    </div>
+    <span class="results-count" id="resultsCount"></span>
+  </div>
+
+  <main id="main"></main>
+  <div id="emptyState" class="empty-state hidden">
+    <h3>No tasks match your search</h3>
+    <p>Try a different keyword or clear the search.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 3: HUMAN TASK OVERVIEW                -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page-section page-section--network" id="sec-human">
+  <div class="page-section-header">
+    <div class="page-section-num">Section 03</div>
+    <div class="page-section-title">Human Task Overview</div>
+    <div class="page-section-subtitle">The core activities that require human judgment, relationship-building, and presence — tasks that define the investor's craft.</div>
+  </div>
+
+  <div id="humanVizContainer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 4: AGENT TASK OVERVIEW & FLOWS        -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page-section page-section--network" id="sec-agent">
+  <div class="page-section-header">
+    <div class="page-section-num">Section 04</div>
+    <div class="page-section-title">Agent Task Overview & Flows</div>
+    <div class="page-section-subtitle">Tasks that AI agents can automate or augment — monitoring, research, analysis, and data management — with example workflows.</div>
+  </div>
+
+  <div id="agentVizContainer"></div>
+  <div class="workflow-section" id="workflowSection"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 5: COMPETITIVE LANDSCAPE              -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page-section" id="sec-landscape">
+  <!-- VC landscape content is built by JS and inserted here -->
+</div>
+
+<!-- ── VERB MODAL ── -->
+<div class="verb-modal-overlay" id="verbModal">
+  <div class="verb-modal">
+    <div class="verb-modal-header">
+      <div class="verb-modal-title" id="verbModalTitle"></div>
+      <button class="verb-modal-close" id="verbModalClose">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="verb-modal-body" id="verbModalBody"></div>
+  </div>
+</div>
+
+<footer>645 Ventures · Investor Agent Playbook · 101 tasks across 9 categories</footer>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+const PIPELINE = [
+  {
+    id: "sourcing",
+    label: "Sourcing",
+    emoji: "🔭",
+    num: "01",
+    color: "#111111",
+    desc: "Find and surface new investment opportunities through network, data, and market awareness",
+    tasks: [
+      { task: "Monitor Crunchbase companies", desc: "Search and track companies on Crunchbase matching the fund's investment thesis by stage, sector, geography, and traction metrics.", output: "Companies to evaluate added to deal flow." },
+      { task: "Monitor PitchBook companies", desc: "Search and track companies on PitchBook for opportunities matching the fund's thesis, leveraging richer financial and deal data not available on Crunchbase.", output: "Companies to evaluate added to deal flow." },
+      { task: "Monitor accelerator cohorts", desc: "Track YC, Techstars, and other accelerator batch lists each cycle to identify companies that fit the fund's thesis as they come to market.", output: "Shortlist of companies to screen added to research list." },
+      { task: "Monitor inbound pitches", desc: "Track and triage unsolicited pitch decks and intro requests from founders, syndicates, and scouts to determine which warrant further review.", output: "Pass decision or advancement to initial screen." },
+      { task: "Monitor top investor deal flow", desc: "Track new investments made by top-tier VCs (Benchmark, Sequoia, a16z, Founders Fund) to surface co-investment opportunities and identify high-signal companies early.", output: "New companies flagged and added to watchlist." },
+      { task: "Monitor GitHub", desc: "Track technical founders shipping high-activity open source repositories in priority verticals to surface companies before they raise.", output: "Companies added to radar for outreach." },
+      { task: "Monitor industry news", desc: "Track TechCrunch, LinkedIn, newsletters, and data aggregators for new companies announcing fundraises, product launches, or notable milestones.", output: "New companies identified and logged in CRM." },
+      { task: "Monitor Product Hunt", desc: "Watch for new consumer and developer tool launches gaining early traction to identify companies worth tracking before they raise.", output: "Companies added to radar for outreach." },
+      { task: "Monitor conferences", desc: "Track upcoming VC and startup conferences (SaaStr, Web Summit, etc.) to identify which events to attend for sourcing, relationship-building, and market intelligence.", output: "Conference calendar updated; priority events identified." },
+      { task: "Monitor demo days", desc: "Track YC, Techstars, and other accelerator demo days to evaluate cohort companies and identify the strongest teams early.", output: "Shortlist of companies to screen; follow-up meetings booked." },
+      { task: "Monitor networking events", desc: "Track local and regional founder dinners, investor meetups, and community events to identify relationship-building opportunities and source proprietary deal flow.", output: "Relevant events identified; attendance planned." },
+      { task: "Monitor co-investor deal sharing", desc: "Track deals shared by co-investors, angels, and other funds to surface reciprocal opportunities and strengthen relationships through active participation in shared deal flow.", output: "Shared deals reviewed; co-investor relationships strengthened." },
+      { task: "Meet with investors", desc: "Connect with other VCs, angels, and fund managers to exchange market perspectives, share deal flow, and build relationships that surface proprietary opportunities.", output: "Investor relationships strengthened; potential deal flow identified." },
+      { task: "Attend conferences", desc: "Attend major VC and startup conferences (SaaStr, Web Summit, etc.) to meet founders, build relationships, and surface new investment opportunities.", output: "New companies identified; contacts added to network." },
+      { task: "Attend networking events", desc: "Participate in founder dinners, investor meetups, and community events to build relationships and source proprietary deal flow.", output: "New founders and investors met; warm relationships established." },
+      { task: "Present deals to investors", desc: "Share compelling investment opportunities with co-investors, angels, and syndicate partners to build reciprocal deal-sharing relationships and fill round allocations.", output: "Deal shared with investors; co-investor interest gauged." },
+      { task: "Create deal-sharing network", desc: "Build and maintain a curated network of investors, scouts, and operators who actively share deal flow with the fund in exchange for access, co-investment, and relationship value.", output: "Deal-sharing network established; inbound deal flow increased." },
+    ]
+  },
+  {
+    id: "screening",
+    label: "Screening",
+    emoji: "🔍",
+    num: "02",
+    color: "#111111",
+    desc: "Rapidly evaluate new opportunities to decide whether deeper diligence is warranted",
+    tasks: [
+      { task: "Build startup profile with relevant details and signals", desc: "Collect and structure key data points on a company—team background, funding history, market size, traction, recent news, and competitive positioning—from public sources, databases, and the pitch deck.", output: "Company record populated with details and signals in CRM." },
+      { task: "Determine company priority", desc: "Decide whether the company warrants active pursuit, a watch list, or a pass based on thesis fit, signal strength, and current pipeline.", output: "Company marked as priority, watch, or pass; status updated in CRM." },
+    ]
+  },
+  {
+    id: "outreach",
+    label: "Outreach",
+    emoji: "✉️",
+    num: "03",
+    color: "#111111",
+    desc: "Initiate and maintain contact with founders throughout the deal process",
+    tasks: [
+      { task: "Write a thoughtful email", desc: "Craft a personalized, well-researched email to a founder that demonstrates genuine knowledge of their company, articulates a specific reason for interest, and gives them a clear reason to respond.", output: "Thoughtful email drafted and ready to send." },
+      { task: "Send an outbound note", desc: "Craft and send a personalized introductory message to a founder that explains genuine investment interest and a specific reason for reaching out.", output: "Email or LinkedIn message sent; outreach logged." },
+      { task: "Send follow-up", desc: "Re-engage founders who haven't responded to the initial outreach with a brief, non-pushy follow-up message.", output: "Follow-up message sent; outreach record updated." },
+      { task: "Send note to schedule first call", desc: "Reach out to coordinate calendars with the founder and confirm a 30–60 minute introductory call.", output: "Meeting booked and calendar invite sent." },
+      { task: "Determine if we should use warm introduction", desc: "Evaluate whether a warm introduction through the fund's network—LPs, advisors, portfolio founders, and co-investors—would be more effective than cold outreach, based on mutual connections, founder preferences, and relationship strength.", output: "Decision made on warm vs. cold outreach approach; introduction path identified if applicable." },
+    ]
+  },
+  {
+    id: "meetings",
+    label: "Founder Meetings",
+    emoji: "🤝",
+    num: "04",
+    color: "#111111",
+    desc: "Structured interactions with founding teams to evaluate fit and build relationships",
+    tasks: [
+      { task: "Meet over Zoom", desc: "Hold a video call with the founding team to hear the pitch, ask clarifying questions, and assess vision, communication style, and coachability.", output: "Meeting notes logged; decision to advance or pass." },
+      { task: "Meet in person", desc: "Meet the founders face-to-face to build deeper rapport, observe team dynamics, and get a fuller read on culture and conviction that video calls can't capture.", output: "In-person impressions noted; relationship advanced." },
+      { task: "Introduce firm partner", desc: "Bring in a fund partner to meet the founders, stress-test the thesis, and move toward an investment committee presentation.", output: "Partner meeting completed; IC process initiated." },
+      { task: "Present as a prepared mind", desc: "Show up to every founder meeting having done the homework—knowing their market, competitors, and prior raises—so the conversation goes deeper faster and founders feel respected.", output: "Founder confidence in the fund increased; relationship differentiated." },
+      { task: "Build one-pager", desc: "Create a concise one-page summary of the company covering team, market, product, traction, and investment thesis to facilitate internal discussion and partner review.", output: "One-pager completed and shared with the team." },
+      { task: "Monitor transcription", desc: "Review the AI-generated transcript from founder calls to capture key quotes, commitments, and details that may have been missed during the live conversation.", output: "Transcript reviewed; key insights and action items logged." },
+    ]
+  },
+  {
+    id: "diligence",
+    label: "Due Diligence",
+    emoji: "🔬",
+    num: "05",
+    color: "#111111",
+    desc: "Rigorous, evidence-based investigation of every material dimension of the business",
+    tasks: [
+      { task: "Organize provided documents", desc: "Collect and structure all documents shared by the founding team—financials, legal materials, metrics, and contracts—into an organized format before deeper analysis begins.", output: "Documents organized; gaps and follow-up requests logged." },
+      { task: "Review data room", desc: "Systematically review all documents in the data room to assess completeness, surface red flags, and identify areas requiring deeper investigation.", output: "Data room reviewed; key findings and gaps documented." },
+      { task: "Conduct and build financial model analysis", desc: "Analyze the startup's revenue model, cost structure, growth assumptions, and scenario forecasts to assess financial rigor, trajectory, and the credibility of projections.", output: "Financial model assessment completed and saved." },
+      { task: "Conduct and build unit economics analysis", desc: "Analyze LTV, CAC, payback period, gross margins, and contribution margins to determine whether the underlying business model is fundamentally healthy and scalable.", output: "Unit economics analysis documented." },
+      { task: "Conduct and build retention analysis", desc: "Review customer cohorts by acquisition month to assess retention curves, net revenue retention, churn rate, and whether engagement is improving or deteriorating over time.", output: "Retention analysis report completed." },
+      { task: "Conduct and build competitive landscape analysis", desc: "Map direct and adjacent competitors, assess market positioning, and evaluate the startup's differentiation, go-to-market advantages, and ability to win against incumbents.", output: "Competitive landscape analysis documented." },
+      { task: "Conduct and build market analysis", desc: "Validate market size claims using third-party industry reports and primary research, and assess whether macro trends support a venture-scale outcome.", output: "Market analysis report completed." },
+      { task: "Conduct and build moat analysis", desc: "Assess the strength and durability of the startup's competitive advantage—network effects, switching costs, data flywheel, proprietary technology, or regulatory barriers.", output: "Moat analysis documented." },
+      { task: "Conduct product market fit assessment", desc: "Evaluate whether the startup has achieved true PMF by analyzing retention cohorts, NPS scores, organic growth signals, and qualitative customer feedback.", output: "PMF assessment completed." },
+      { task: "Conduct customer calls", desc: "Speak directly with existing customers, churned users, and lost prospects to validate retention, satisfaction, use cases, and competitive losses firsthand.", output: "Customer call notes saved; key themes and risks documented." },
+      { task: "Conduct technical due diligence", desc: "Assess the product's technical architecture, scalability, security posture, technical debt, and defensibility by engaging a technical expert or reviewing the codebase.", output: "Technical DD report completed." },
+      { task: "Conduct legal due diligence", desc: "Review corporate structure, IP ownership, material contracts, employment agreements, regulatory compliance, and pending or potential litigation.", output: "Legal DD report completed; red flags flagged." },
+      { task: "Conduct cap table due diligence", desc: "Analyze ownership structure, existing investor stakes, option pool size, SAFE and convertible note terms, and dilution implications for the proposed round.", output: "Cap table analysis and pro forma ownership completed." },
+      { task: "Conduct founder background checks", desc: "Verify founder backgrounds, prior company histories, professional reputation, and references through formal screening and direct conversations with people who have worked with them.", output: "Background check and reference summary completed." },
+      { task: "Conduct regulatory environment assessment", desc: "Evaluate compliance requirements, licensing obligations, and government or legal headwinds that could constrain the business's growth or operations.", output: "Regulatory risk assessment completed." },
+      { task: "Conduct and build valuation analysis", desc: "Assess an appropriate entry valuation using comparable transactions, revenue multiples, DCF, and market-based benchmarks to anchor the investment discussion.", output: "Valuation range and recommendation documented." },
+    ]
+  },
+  {
+    id: "tracking",
+    label: "Ongoing Tracking",
+    emoji: "📡",
+    num: "06",
+    color: "#111111",
+    desc: "Stay current on companies in the pipeline and re-engage at the right moment",
+    tasks: [
+      { task: "Send note for a deal update", desc: "Contact a founder you have been tracking to check on fundraising progress, key milestones hit, and round status.", output: "Status update received and CRM refreshed." },
+      { task: "Monitor company milestones and signals", desc: "Watch for meaningful developments—new product launches, major hires, press coverage, or funding announcements—that change a company's priority in the pipeline.", output: "Signal logged; pipeline status updated if warranted." },
+      { task: "Send note to re-engage a paused company", desc: "Reach back out to a company that was previously passed or deprioritized after a meaningful change in traction, team, or market conditions.", output: "Conversation reopened; company status updated in CRM." },
+      { task: "Monitor and schedule periodic check-ins with the founder", desc: "Schedule regular informal check-ins with founders you are tracking to stay current on progress, deepen the relationship, and be top of mind when they open a round.", output: "Meeting completed; relationship strengthened; CRM updated." },
+    ]
+  },
+  {
+    id: "decision",
+    label: "Investment Decisions",
+    emoji: "✍️",
+    num: "07",
+    color: "#111111",
+    desc: "Progress from conviction to signed term sheet and wired capital",
+    tasks: [
+      { task: "Present to investment committee", desc: "Present findings and a formal recommendation to the fund's general partners or investment committee, fielding questions and defending the thesis.", output: "IC decision made; term sheet authorized or deal passed." },
+      { task: "Build pressure test of assumptions", desc: "Systematically challenge the key assumptions underlying the investment thesis—market size, growth rate, competitive moat, and founder claims—by stress-testing them against data, expert input, and adversarial scenarios.", output: "Pressure test completed; assumptions validated or revised; key risks surfaced." },
+      { task: "Define appropriate deal structure", desc: "Decide on the investment structure—check size, ownership target, instrument (priced round, SAFE, convertible), pro rata rights, board seat, and lead vs. follow role—based on valuation and conviction.", output: "Deal structure defined and approved internally." },
+      { task: "Create term sheet", desc: "Draft the term sheet with legal counsel, capturing economic terms (valuation, option pool, pro rata) and governance terms (board seat, information rights, ROFR), then present it to the founding team and debate the terms until both sides reach agreement.", output: "Signed term sheet executed." },
+      { task: "Present term sheet", desc: "Deliver the term sheet to the founding team, walking them through key economic and governance terms and expressing the fund's conviction in the company.", output: "Term sheet delivered to founders." },
+      { task: "Create syndicate", desc: "Identify, vet, and bring in co-investors to fill remaining allocation in the round, prioritizing cap table quality and strategic value-add.", output: "Round fully subscribed with co-investors committed." },
+      { task: "Introduce other investors", desc: "Connect the founding team with co-investors, angels, or strategic LPs who can add value to the round beyond capital—bringing relevant expertise, networks, or customer relationships.", output: "Investor introductions made; co-investor conversations initiated." },
+      { task: "Issue capital", desc: "Confirm final post-close cap table, complete legal document execution, and wire the investment amount to the company to formally close the round.", output: "Capital deployed; company on-boarded to portfolio." },
+    ]
+  },
+  {
+    id: "portfolio",
+    label: "Portfolio Management",
+    emoji: "📈",
+    num: "08",
+    color: "#111111",
+    desc: "Support portfolio companies and monitor performance post-investment",
+    tasks: [
+      { task: "Meet with team", desc: "Spend time with the portfolio company's broader team—beyond the founders—to assess culture, execution quality, and whether the organization is scaling well.", output: "Team assessment noted; follow-up actions identified." },
+      { task: "Attend board meetings", desc: "Participate in board meetings, all-hands, and other key organizational meetings to provide oversight, governance, and strategic input to the portfolio company.", output: "Meeting notes and action items recorded." },
+      { task: "Introduce customers", desc: "Connect a portfolio company with potential customers from the fund's LP base, co-investor networks, or the GP's personal network.", output: "Introduction sent; meeting facilitated." },
+      { task: "Provide strategic advice", desc: "Advise portfolio CEOs on company strategy, pricing decisions, go-to-market approach, organizational design, or product direction.", output: "Strategic input delivered; decision supported." },
+      { task: "Introduce strategic partners", desc: "Connect a portfolio company with potential technology partners, distribution channels, advisors, or vendors who can accelerate growth.", output: "Introduction sent; partnership conversation initiated." },
+      { task: "Introduce talent", desc: "Connect a portfolio company with strong candidates, advisors, or executives from the fund's network to help them build their team faster.", output: "Introduction sent; candidate meeting facilitated." },
+      { task: "Interview talent", desc: "Participate in final-round interviews for key executive hires at portfolio companies to assess candidate quality and culture fit alongside the founding team.", output: "Interview completed; hire recommendation provided." },
+      { task: "Meet with bankers", desc: "Engage with investment bankers advising a portfolio company on a sale, fundraise, or IPO to understand process, timeline, and strategic options.", output: "Banker meeting notes recorded; process expectations set." },
+      { task: "Meet with other investors", desc: "Connect with co-investors and prospective investors in a portfolio company to align on strategy, share diligence, and coordinate on the next round.", output: "Investor alignment achieved; co-investor relationships maintained." },
+      { task: "Conduct diligence for follow-on investment", desc: "Assess the portfolio company's progress, current valuation, and round terms to determine whether to invest in the next funding round.", output: "Follow-on investment decision made." },
+      { task: "Monitor portfolio company KPIs", desc: "Review monthly or quarterly financial and operational metrics for each portfolio company to track performance against plan and surface issues early.", output: "KPI review completed; issues flagged proactively." },
+      { task: "Conduct and build exit readiness analysis", desc: "Evaluate whether a portfolio company is ready for an IPO or M&A process by reviewing metrics, governance, team depth, and current market conditions.", output: "Exit readiness assessment and recommended timeline completed." },
+    ]
+  }
+];
+
+const SUPPORT = [
+  {
+    id: "research",
+    label: "Research",
+    emoji: "📚",
+    color: "#444444",
+    barDesc: "Ongoing market and sector research that informs every stage of the investment process",
+    desc: "Continuous market intelligence, sector mapping, and curated research lists that underpin decisions at every deal stage",
+    tasks: [
+      { task: "Monitor industry trends", desc: "Track macro trends, emerging technologies, regulatory shifts, and category dynamics in priority sectors to sharpen the fund's investment thesis.", output: "Thesis updated; new conviction areas documented." },
+      { task: "Review industry trends", desc: "Assess and synthesize the trends being monitored to draw conclusions about where markets are heading and how they should influence the fund's investment priorities.", output: "Trend review completed; insights documented and shared with the team." },
+      { task: "Create a vision of the future", desc: "Develop forward-looking views on where specific markets and technologies are heading over a 5–10 year horizon to identify white spaces and build differentiated conviction ahead of the market.", output: "Thesis narrative updated; conviction areas documented." },
+      { task: "Create thesis", desc: "Synthesize market research, trend analysis, and conviction areas into a written investment thesis that defines where the fund will focus and why it will win in those sectors.", output: "Thesis documented and shared with the team." },
+      { task: "Conduct and build thesis analysis", desc: "Rigorously stress-test the fund's existing thesis against new market data, emerging companies, and competitive dynamics to validate assumptions and refine conviction areas.", output: "Thesis analysis completed; updates documented." },
+      { task: "Attend industry conferences", desc: "Participate in key events (SaaStr, YC Demo Day, Web Summit) to source deals, meet founders, deepen relationships with co-investors, and build the fund's brand.", output: "New contacts added; potential deals identified." },
+      { task: "Present thought leadership content", desc: "Write blog posts, give conference talks, or post insights on LinkedIn to build the fund's brand and attract high-quality inbound deal flow.", output: "Content published; brand visibility increased." },
+      { task: "Create advisor network", desc: "Identify and engage technical, operational, and domain experts who can help the fund evaluate deals and support portfolio companies.", output: "Advisor network built; experts matched to portfolio companies." },
+      { task: "Create co-investor network", desc: "Proactively build working relationships with VCs who co-invest alongside the fund or refer proprietary deals.", output: "Co-investor network established; referral relationships active." },
+      { task: "Create company categorizations", desc: "Organize companies in the CRM by sector, stage, geography, and thesis fit to enable systematic coverage and prioritized outreach across the pipeline.", output: "Company categorizations created and applied in deal flow." },
+    ]
+  },
+  {
+    id: "lp",
+    label: "LP Management",
+    emoji: "🏦",
+    color: "#444444",
+    barDesc: "Managing LP relationships, capital calls, reporting, and fund-level economics",
+    desc: "Maintaining the fund's relationship with limited partners and tracking fund-level performance metrics",
+    tasks: [
+      { task: "Create narrative for LPs", desc: "Develop the fund's story and perspective for limited partners—this includes creating materials for a quarterly report, annual meeting, and LPAC.", output: "LP narrative created and materials ready for distribution." },
+      { task: "Build LP facing materials", desc: "Assemble the supporting data, charts, and portfolio updates that back the quarterly LP report—pulling metrics, annotating company progress, and packaging materials for distribution.", output: "LP report finalized and delivered to limited partners." },
+      { task: "Conduct financial and other ad hoc analyses for LPs", desc: "Analyze fund-level financial performance—IRR, TVPI, RVPI, DPI, management fees, and carry—to produce accurate and transparent reporting for limited partners.", output: "Financial analysis completed and ready for LP reporting." },
+      { task: "Create portfolio", desc: "Build and maintain the fund's portfolio view—tracking company valuations, ownership stakes, follow-on rounds, and overall fund composition across active investments.", output: "Portfolio view created and up to date." },
+      { task: "Present materials to LPs", desc: "Deliver quarterly reports, annual meeting presentations, and other materials to limited partners in a clear and compelling format that maintains confidence and transparency.", output: "Materials presented to LPs; questions addressed." },
+    ]
+  },
+  {
+    id: "ops",
+    label: "Strategy & Operations",
+    emoji: "⚙️",
+    color: "#444444",
+    barDesc: "The frameworks, systems, and workflows that keep the investment operation running efficiently",
+    desc: "Building the strategic frameworks and maintaining the systems, data infrastructure, and processes that underpin an efficient investment operation",
+    tasks: [
+      { task: "Update startup information in the CRM", desc: "Keep all startup records current—logging new details, updating pipeline stage, assigning next steps, adding highlights, and ensuring company information reflects the latest known state.", output: "Startup record updated; team has accurate, current information." },
+      { task: "Create decision frameworks", desc: "Design structured frameworks the team uses to make consistent, high-quality investment decisions—covering pass/advance criteria, conviction levels, and escalation triggers at each pipeline stage.", output: "Decision framework documented and adopted by the team." },
+      { task: "Create scoring frameworks", desc: "Build quantitative and qualitative scoring systems for evaluating startups across key dimensions—team, market, product, traction, and defensibility—so assessments are consistent and comparable.", output: "Scoring framework created; startups systematically evaluated." },
+      { task: "Create investment frameworks", desc: "Develop the analytical frameworks the fund uses to evaluate opportunities—including market sizing approaches, valuation methodologies, risk assessment matrices, and portfolio construction models.", output: "Investment frameworks documented and shared with the team." },
+      { task: "Create investment processes", desc: "Design and regularly refine the fund's end-to-end investment workflow—from sourcing through close—defining stage gates, ownership, timelines, and quality standards at each step.", output: "Investment process documented, improved, and shared with the team." },
+      { task: "Export data for analysis", desc: "Export CRM, portfolio, or pipeline data for reporting, financial modeling, or external analysis.", output: "Data export completed and shared or imported into analysis tool." },
+      { task: "Update external startup documents", desc: "Maintain and refresh external-facing documents for portfolio and pipeline companies—pitch decks, one-pagers, data room contents, and shared materials—ensuring the most current version is accessible to the right parties.", output: "External documents updated and correctly shared." },
+      { task: "Build supporting software", desc: "Develop, configure, or integrate software tools that support the fund's investment operations—including CRM customizations, automation workflows, data pipelines, and internal tooling.", output: "Supporting software built or configured; team productivity improved." },
+    ]
+  }
+];
+
+// ─────────────────────────────────────────────
+//  BUILD DIAGRAM
+// ─────────────────────────────────────────────
+const stageRow = document.getElementById("stageRow");
+PIPELINE.forEach((cat, i) => {
+  if (i > 0) {
+    const arr = document.createElement("div");
+    arr.className = "stage-arrow";
+    arr.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>`;
+    stageRow.appendChild(arr);
+  }
+  const box = document.createElement("a");
+  box.className = "stage-box";
+  box.href = "#" + cat.id;
+  box.style.background = cat.color;
+  box.innerHTML = `
+    <div class="stage-num">STAGE ${cat.num}</div>
+    <div class="stage-emoji">${cat.emoji}</div>
+    <div class="stage-name">${cat.label}</div>
+    <div class="stage-count">${cat.tasks.length} tasks</div>
+  `;
+  box.addEventListener("click", e => {
+    e.preventDefault();
+    document.getElementById(cat.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  stageRow.appendChild(box);
+});
+
+const supportBars = document.getElementById("supportBars");
+SUPPORT.forEach(cat => {
+  const bar = document.createElement("a");
+  bar.className = "support-bar";
+  bar.href = "#" + cat.id;
+  bar.style.background = cat.color;
+  bar.innerHTML = `
+    <span class="support-bar-emoji">${cat.emoji}</span>
+    <span class="support-bar-name">${cat.label}</span>
+    <span class="support-bar-desc">${cat.barDesc}</span>
+    <span class="support-bar-count">${cat.tasks.length} tasks</span>
+  `;
+  bar.addEventListener("click", e => {
+    e.preventDefault();
+    document.getElementById(cat.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  supportBars.appendChild(bar);
+});
+
+// ─────────────────────────────────────────────
+//  BUILD TASK SECTIONS
+// ─────────────────────────────────────────────
+const main = document.getElementById("main");
+
+function buildSection(cat) {
+  const section = document.createElement("section");
+  section.className = "section";
+  section.id = cat.id;
+
+  const colorStyle = `color:${cat.color}`;
+  const bgStyle = `background:${cat.color}18`;
+
+  section.innerHTML = `
+    <div class="section-header">
+      <div class="section-count">${cat.tasks.length} tasks</div>
+    </div>
+  `;
+
+  const GROUPED_VERBS = new Set(["Build", "Conduct", "Export", "Monitor", "Send", "Update"]);
+
+  const consolidatedTasks = [];
+  const verbGroups = [];
+  const verbGroupMap = {};
+
+  cat.tasks.forEach(t => {
+    const verb = t.task.split(" ")[0];
+    if (GROUPED_VERBS.has(verb)) {
+      consolidatedTasks.push(t);
+    } else {
+      if (!verbGroupMap[verb]) {
+        verbGroupMap[verb] = [];
+        verbGroups.push({ verb, tasks: verbGroupMap[verb] });
+      }
+      verbGroupMap[verb].push(t);
+    }
+  });
+
+  function makeCard(t) {
+    const card = document.createElement("div");
+    card.className = "task-card";
+    card.dataset.search = `${t.task} ${t.desc} ${t.output}`.toLowerCase();
+    card.innerHTML = `
+      <div class="task-card-top">
+        <span class="task-title">${t.task}</span>
+        <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+      <div class="task-body">
+        <div class="task-label">What you do</div>
+        <div class="task-desc">${t.desc}</div>
+        <div class="task-label">Output</div>
+        <div class="task-output">
+          <span class="output-icon">✅</span>
+          <span class="output-text">${t.output}</span>
+        </div>
+      </div>
+    `;
+    card.addEventListener("click", () => card.classList.toggle("expanded"));
+    return card;
+  }
+
+  const humanTasks = verbGroups.flatMap(g => g.tasks);
+  const hasAgent = consolidatedTasks.length > 0;
+  const hasHuman = humanTasks.length > 0;
+
+  // Count rows so category node can span them all
+  const rowCount = (hasAgent ? 1 : 0) + (hasHuman ? 1 : 0);
+
+  const flow = document.createElement("div");
+  flow.className = "section-flow";
+
+  // Col 1: Category node — spans all rows
+  const catNode = document.createElement("div");
+  catNode.className = "flow-category";
+  catNode.style.cssText = `background:${cat.color}; border-color:${cat.color}; grid-row: 1 / span ${rowCount};`;
+  catNode.innerHTML = `<div class="flow-category-inner" style="color:white">${cat.emoji}<br>${cat.label}<span class="flow-category-desc" style="color:rgba(255,255,255,.7)">${cat.desc}</span></div>`;
+  flow.appendChild(catNode);
+
+  // Helper: add one row (col 2 label + col 3 tasks)
+  function addRow(labelText, groupClass, tasks) {
+    const labelEl = document.createElement("div");
+    labelEl.className = `flow-group-label ${groupClass}`;
+    labelEl.textContent = labelText;
+    flow.appendChild(labelEl);
+
+    const tasksCol = document.createElement("div");
+    tasksCol.className = `flow-tasks-col flow-tasks--${groupClass.replace("flow-group--", "")}`;
+    tasks.forEach(t => tasksCol.appendChild(makeCard(t)));
+    flow.appendChild(tasksCol);
+  }
+
+  if (hasHuman) addRow("Human Tasks",         "flow-group--human", humanTasks);
+  if (hasAgent) addRow("Agent Tasks",         "flow-group--agent", consolidatedTasks);
+
+  section.appendChild(flow);
+
+  return section;
+}
+
+// Pipeline sections — with downward arrows between each stage
+const pipelineArrowSvg = `<svg width="20" height="52" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 52"><line x1="10" y1="0" x2="10" y2="40"/><polyline points="4,33 10,43 16,33"/></svg>`;
+PIPELINE.forEach((cat, i) => {
+  main.appendChild(buildSection(cat));
+  if (i < PIPELINE.length - 1) {
+    const arr = document.createElement("div");
+    arr.className = "pipeline-arrow";
+    arr.innerHTML = pipelineArrowSvg;
+    main.appendChild(arr);
+  }
+});
+
+// Divider
+const divider = document.createElement("div");
+divider.className = "support-divider";
+divider.innerHTML = `
+  <div class="support-divider-line"></div>
+  <div class="support-divider-text">Ongoing Functions</div>
+  <div class="support-divider-line"></div>
+`;
+main.appendChild(divider);
+
+// Support sections
+SUPPORT.forEach(cat => main.appendChild(buildSection(cat)));
+
+// Update header total
+const total = [...PIPELINE, ...SUPPORT].reduce((s, c) => s + c.tasks.length, 0);
+document.getElementById("totalCount").textContent = total;
+
+
+// ─────────────────────────────────────────────
+//  SEARCH
+// ─────────────────────────────────────────────
+const searchInput  = document.getElementById("search");
+const resultsCount = document.getElementById("resultsCount");
+const emptyState   = document.getElementById("emptyState");
+
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.toLowerCase().trim();
+  let visible = 0;
+
+  document.querySelectorAll(".section").forEach(section => {
+    let sectionVisible = false;
+    section.querySelectorAll(".task-card").forEach(card => {
+      const match = !q || card.dataset.search.includes(q);
+      card.classList.toggle("hidden", !match);
+      if (match) { sectionVisible = true; visible++; }
+    });
+    section.classList.toggle("hidden", !sectionVisible);
+  });
+
+  // Hide divider if all support sections are hidden
+  const anySupport = SUPPORT.some(c => !document.getElementById(c.id)?.classList.contains("hidden"));
+  divider.classList.toggle("hidden", !anySupport && q);
+
+  resultsCount.textContent = q ? `${visible} result${visible !== 1 ? "s" : ""}` : "";
+  emptyState.classList.toggle("hidden", visible > 0 || !q);
+});
+
+// ─────────────────────────────────────────────
+//  RADIAL ROLE VISUALIZATIONS (true circular layout)
+// ─────────────────────────────────────────────
+(function buildNetworkGraphs() {
+  const humanSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 13c-4.42 0-8 1.79-8 4v2h16v-2c0-2.21-3.58-4-8-4z"/></svg>`;
+  const agentSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7v1h1a1 1 0 110 2h-1v1a3 3 0 01-3 3H7a3 3 0 01-3-3v-1H3a1 1 0 110-2h1v-1a7 7 0 017-7h1V5.73A2 2 0 0112 2zM9 13a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>`;
+
+  function buildNetwork(cfg) {
+    const wrap = document.createElement("div");
+    wrap.className = "network-graph";
+
+    const canvasW = 700;
+    const canvasH = 500;
+    const cx = canvasW / 2;
+    const cy = canvasH / 2;
+    const hubR = 60;
+    const orbitR = 190;
+
+    const canvas = document.createElement("div");
+    canvas.className = "network-canvas";
+    canvas.style.maxWidth = canvasW + "px";
+    canvas.style.margin = "0 auto";
+    canvas.style.aspectRatio = `${canvasW} / ${canvasH}`;
+
+    const scene = document.createElement("div");
+    scene.className = "network-scene";
+
+    // ── Decorative orbit rings ──
+    [130, 190, 260].forEach((r, i) => {
+      const orbit = document.createElement("div");
+      orbit.className = "network-orbit";
+      orbit.style.cssText = `
+        width: ${r*2}px; height: ${r*2}px;
+        left: calc(50% - ${r}px); top: calc(50% - ${r}px);
+        border-color: ${cfg.color};
+        opacity: ${0.06 + i * 0.02};
+      `;
+      scene.appendChild(orbit);
+    });
+
+    // ── Floating particles ──
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement("div");
+      p.className = "network-particle";
+      p.style.cssText = `
+        left: ${10 + Math.random() * 80}%;
+        top: ${10 + Math.random() * 80}%;
+        background: ${cfg.color};
+        animation-duration: ${4 + Math.random() * 6}s;
+        animation-delay: ${Math.random() * 5}s;
+      `;
+      scene.appendChild(p);
+    }
+
+    // ── SVG connection lines ──
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "network-lines");
+    svg.setAttribute("viewBox", `0 0 ${canvasW} ${canvasH}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+
+    const count = cfg.verbs.length;
+    const startDeg = -90;
+
+    // Pre-calculate node positions
+    const nodePositions = cfg.verbs.map((v, i) => {
+      const angleDeg = startDeg + (360 / count) * i;
+      const angleRad = angleDeg * Math.PI / 180;
+      return {
+        x: cx + orbitR * Math.cos(angleRad),
+        y: cy + orbitR * Math.sin(angleRad),
+        angleRad
+      };
+    });
+
+    // Draw connections: hub → each node
+    nodePositions.forEach((pos, i) => {
+      const x1 = cx + hubR * Math.cos(pos.angleRad);
+      const y1 = cy + hubR * Math.sin(pos.angleRad);
+      const x2 = pos.x - 28 * Math.cos(pos.angleRad);
+      const y2 = pos.y - 28 * Math.sin(pos.angleRad);
+
+      const lineColor = cfg.verbs[i].highlight ? "#ef4444" : cfg.color;
+
+      // Glow line (wide, blurred)
+      const glow = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      glow.setAttribute("x1", x1); glow.setAttribute("y1", y1);
+      glow.setAttribute("x2", x2); glow.setAttribute("y2", y2);
+      glow.setAttribute("class", "network-line--glow");
+      glow.setAttribute("stroke", lineColor);
+      svg.appendChild(glow);
+
+      // Solid line
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+      line.setAttribute("class", "network-line");
+      line.setAttribute("stroke", lineColor);
+      svg.appendChild(line);
+
+      // Animated pulse dots traveling along line
+      const pulse = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      pulse.setAttribute("x1", x1); pulse.setAttribute("y1", y1);
+      pulse.setAttribute("x2", x2); pulse.setAttribute("y2", y2);
+      pulse.setAttribute("class", "network-line-pulse");
+      pulse.setAttribute("stroke", lineColor);
+      pulse.style.animationDelay = (i * 0.4) + "s";
+      svg.appendChild(pulse);
+    });
+
+    // Cross-connections between adjacent nodes (subtle)
+    for (let i = 0; i < count; i++) {
+      const j = (i + 1) % count;
+      const p1 = nodePositions[i];
+      const p2 = nodePositions[j];
+      const cross = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      cross.setAttribute("x1", p1.x); cross.setAttribute("y1", p1.y);
+      cross.setAttribute("x2", p2.x); cross.setAttribute("y2", p2.y);
+      cross.setAttribute("stroke", cfg.color);
+      cross.setAttribute("stroke-width", "0.5");
+      cross.setAttribute("opacity", "0.15");
+      cross.setAttribute("stroke-dasharray", "4 8");
+      svg.appendChild(cross);
+    }
+
+    scene.appendChild(svg);
+
+    // ── Hub node ──
+    const hub = document.createElement("div");
+    hub.className = "network-hub";
+    hub.style.cssText = `
+      left: calc(50% - ${hubR}px); top: calc(50% - ${hubR}px);
+      width: ${hubR*2}px; height: ${hubR*2}px;
+      background: linear-gradient(135deg, ${cfg.color}, ${cfg.colorLight});
+      box-shadow: 0 0 30px ${cfg.color}88, 0 0 80px ${cfg.color}33;
+      border: 1.5px solid ${cfg.colorLight}aa;
+    `;
+    hub.style.setProperty("--hub-glow", cfg.color);
+    hub.innerHTML = `${cfg.svg}<span class="network-hub-label">${cfg.hubLabel}</span>`;
+    hub.querySelector("::before")
+    // Set the pulse ring colors via inline
+    const hubStyle = document.createElement("style");
+    hubStyle.textContent = `
+      #${cfg.id} .network-hub::before,
+      #${cfg.id} .network-hub::after {
+        background: radial-gradient(circle, ${cfg.color}66, transparent 70%);
+      }
+    `;
+    document.head.appendChild(hubStyle);
+    scene.appendChild(hub);
+
+    // ── Outer nodes ──
+    cfg.verbs.forEach((v, i) => {
+      const pos = nodePositions[i];
+      const node = document.createElement("div");
+      node.className = "network-node";
+
+      const isHighlight = v.highlight;
+      const nodeColor = isHighlight ? "#ef4444" : cfg.color;
+      const nodeColorLight = isHighlight ? "#ff6b6b" : cfg.colorLight;
+      const glowAlpha = isHighlight ? "55" : "44";
+
+      // Position: percentage-based for responsiveness
+      const leftPct = (pos.x / canvasW * 100);
+      const topPct = (pos.y / canvasH * 100);
+
+      node.style.cssText = `
+        left: ${leftPct}%;
+        top: ${topPct}%;
+        transform: translate(-50%, -50%);
+        --node-glow: ${nodeColor}${glowAlpha};
+        --node-glow-soft: ${nodeColor}22;
+        --node-border: ${nodeColor}66;
+        animation-delay: ${i * 0.15}s;
+      `;
+
+      const dot = document.createElement("div");
+      dot.className = "network-node-dot";
+      dot.style.background = `linear-gradient(135deg, ${nodeColor}cc, ${nodeColorLight}99)`;
+      dot.innerHTML = `<span>${v.icon}</span>`;
+
+      const label = document.createElement("div");
+      label.className = "network-node-label";
+      label.textContent = v.verb;
+
+      const sub = document.createElement("div");
+      sub.className = "network-node-sub";
+      sub.textContent = v.tool || v.desc || "";
+
+      node.appendChild(dot);
+      node.appendChild(label);
+      node.appendChild(sub);
+      node.style.cursor = "pointer";
+      node.addEventListener("click", () => {
+        if (window._openVerbModal) window._openVerbModal(v.verb, v.icon);
+      });
+      scene.appendChild(node);
+    });
+
+    canvas.appendChild(scene);
+    wrap.appendChild(canvas);
+
+    // ── Note ──
+    if (cfg.note) {
+      const note = document.createElement("div");
+      note.className = "network-note";
+      note.style.cssText = `
+        color: ${cfg.noteColor || cfg.color};
+        background: ${(cfg.noteColor || cfg.color)}0a;
+        border: 1px solid ${(cfg.noteColor || cfg.color)}22;
+      `;
+      note.textContent = cfg.note;
+      wrap.appendChild(note);
+    }
+
+    return wrap;
+  }
+
+  // ── HUMAN NETWORK (Section 3) ──
+  const humanContainer = document.getElementById("humanVizContainer");
+  humanContainer.appendChild(buildNetwork({
+    id: "sec-human",
+    title: "Human Tasks",
+    hubLabel: "Investor",
+    svg: humanSvg,
+    color: "#22c55e",
+    colorLight: "#4ade80",
+    verbs: [
+      { verb: "Create", icon: "🛠️", desc: "Networks, theses, term sheets" },
+      { verb: "Introduce", icon: "🤝", desc: "Partners, investors, talent" },
+      { verb: "Attend", icon: "📍", desc: "Conferences, board meetings, events" },
+      { verb: "Meet", icon: "💬", desc: "Founders, teams, bankers" },
+    ],
+  }));
+
+  // ── AGENT NETWORK (Section 4) ──
+  const agentContainer = document.getElementById("agentVizContainer");
+  agentContainer.appendChild(buildNetwork({
+    id: "sec-agent",
+    title: "Agent Tasks",
+    hubLabel: "AI Agent",
+    svg: agentSvg,
+    color: "#f05a2e",
+    colorLight: "#f7934c",
+    verbs: [
+      { verb: "Monitor", icon: "👁️", tool: "Voyager, Fireflies" },
+      { verb: "Conduct", icon: "🔬", tool: "Claude Skills" },
+      { verb: "Send", icon: "✉️", tool: "Perplexity" },
+      { verb: "Update", icon: "🔄", tool: "Voyager", highlight: true },
+      { verb: "Build", icon: "⚡", tool: "Claude Code" },
+    ],
+    note: "Integrating data from other sources into Voyager is the most difficult piece to build.",
+    noteColor: "#ef4444",
+  }));
+})();
+
+// ─────────────────────────────────────────────
+//  RESEARCH WORKFLOW (standalone section below radials)
+// ─────────────────────────────────────────────
+(function buildWorkflow() {
+  const container = document.getElementById("workflowSection");
+  const agentSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7v1h1a1 1 0 110 2h-1v1a3 3 0 01-3 3H7a3 3 0 01-3-3v-1H3a1 1 0 110-2h1v-1a7 7 0 017-7h1V5.73A2 2 0 0112 2zM9 13a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>`;
+
+  const flowLabel = document.createElement("div");
+  flowLabel.className = "workflow-section-label";
+  flowLabel.textContent = "Example: Agent Research Workflow";
+  container.appendChild(flowLabel);
+
+  const diagram = document.createElement("div");
+  diagram.className = "workflow-diagram";
+
+  // Hub
+  const hubNode = document.createElement("div");
+  hubNode.className = "workflow-node";
+  const hub = document.createElement("div");
+  hub.className = "workflow-hub-sm";
+  hub.innerHTML = agentSvg;
+  hubNode.appendChild(hub);
+  const hubLabel = document.createElement("div");
+  hubLabel.className = "workflow-hub-sm-label";
+  hubLabel.textContent = "Claude Desktop";
+  hubNode.appendChild(hubLabel);
+  diagram.appendChild(hubNode);
+
+  // Arrow
+  const arrow1 = document.createElement("div");
+  arrow1.className = "workflow-connector";
+  arrow1.innerHTML = `<svg width="50" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 50 24"><line x1="0" y1="12" x2="38" y2="12"/><polyline points="32,6 42,12 32,18"/></svg>`;
+  diagram.appendChild(arrow1);
+
+  // Sources
+  const sources = [
+    { icon: "🎙️", name: "Fireflies" },
+    { icon: "📁", name: "Google Drive" },
+    { icon: "🔭", name: "Voyager" },
+    { icon: "🔍", name: "Web Search" },
+  ];
+  const sourcesCol = document.createElement("div");
+  sourcesCol.className = "workflow-sources";
+  sources.forEach(s => {
+    const src = document.createElement("div");
+    src.className = "workflow-source";
+    src.innerHTML = `<span class="workflow-source-icon">${s.icon}</span>${s.name}`;
+    sourcesCol.appendChild(src);
+  });
+  diagram.appendChild(sourcesCol);
+
+  // Arrow
+  const arrow2 = document.createElement("div");
+  arrow2.className = "workflow-connector";
+  arrow2.innerHTML = `<svg width="50" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 50 24"><line x1="0" y1="12" x2="38" y2="12"/><polyline points="32,6 42,12 32,18"/></svg>`;
+  diagram.appendChild(arrow2);
+
+  // Output
+  const outputBox = document.createElement("div");
+  outputBox.className = "workflow-output-box";
+  outputBox.innerHTML = `
+    <div class="workflow-output-icon">📄</div>
+    <div class="workflow-output-title">Synthesized Research Document</div>
+    <div class="workflow-output-sub">by Claude Code</div>
+  `;
+  diagram.appendChild(outputBox);
+
+  container.appendChild(diagram);
+})();
+
+/* ── VC LANDSCAPE PANELS ── */
+(function buildVCLandscape() {
+  const firms = [
+    {
+      name: "SignalFire",
+      tagline: "First VC built as a technology company · ~$3B AUM",
+      badge: "AI-Native",
+      approach: "Proprietary AI Platform: Beacon AI",
+      desc: "Built a machine-learning platform called Beacon AI that scans 80M+ organizations and 650M+ people to detect traction anomalies, benchmark companies, and surface investment opportunities before they hit the market.",
+      highlights: [
+        "Tracks talent mobility, GitHub momentum, and company signals in real-time",
+        "Beacon powers deal sourcing, talent recruiting for portfolio cos, and competitive analysis",
+        "Raised $1B+ in 2025 for applied AI focus, pushing AUM to ~$3B",
+        "Engineering team is foundational — not a support function but core to the firm",
+      ],
+      sourceUrl: "https://www.signalfire.com/beacon-ai",
+      sourceLabel: "signalfire.com/beacon-ai",
+    },
+    {
+      name: "Sequoia Capital",
+      tagline: "Legendary Silicon Valley firm · Multi-stage global",
+      badge: "Data-Driven",
+      approach: "AI-Augmented Deal Analysis at Scale",
+      desc: "Uses AI to analyze thousands of startups weekly — scanning financials, market dynamics, and team backgrounds to ensure no opportunity is overlooked and reduce decision-making time.",
+      highlights: [
+        "Led $50M round for Rowspace, an AI platform for financial firms managing $100B+ in assets",
+        "Invested in AI tool to replace junior banker workflows (Bloomberg, Oct 2025)",
+        "Declared 2026 as 'the year of AGI' — positioning AI as central to dealmaking",
+        "85% of surveyed VCs now use AI for daily tasks, up from 76% in 2025",
+      ],
+      sourceUrl: "https://sequoiacap.com/article/ai-in-2025/",
+      sourceLabel: "sequoiacap.com",
+    },
+    {
+      name: "Andreessen Horowitz (a16z)",
+      tagline: "$15B raised Jan 2026 · $1.7B AI Infrastructure Fund",
+      badge: "Mega Fund",
+      approach: "Massive AI Infrastructure Bets",
+      desc: "Created a dedicated $1.7B AI infrastructure fund to back platforms, tools, and systems powering next-gen AI. Investing across foundational models, networking, security, and coding applications.",
+      highlights: [
+        "Portfolio includes OpenAI, Cursor, ElevenLabs, Ideogram, and Fal",
+        "$475M investment in Unconventional (AI chip startup)",
+        "2025 mix: 40% healthcare, 25% infra, 20% vertical copilots, 15% other",
+        "Pivoting from copilots to autonomous agents — Sierra, Glean, Decagon",
+      ],
+      sourceUrl: "https://a16z.com/ai/",
+      sourceLabel: "a16z.com/ai",
+    },
+    {
+      name: "EQT Ventures",
+      tagline: "European PE/VC powerhouse · Motherbrain since 2016",
+      badge: "Pioneer",
+      approach: "Motherbrain: AI Deal Sourcing Engine",
+      desc: "Built Motherbrain in 2016 — a proprietary AI that scores investment opportunities on a 1-340 scale by combining social media, web traffic, team data, and historical due diligence records.",
+      highlights: [
+        "Scans and models 50M+ companies across the startup ecosystem",
+        "Successfully sourced 15 investments directly through AI recommendations",
+        "Supports full lifecycle: sourcing → due diligence → portfolio value creation",
+        "Also used for market analysis, talent acquisition, and competitor benchmarking",
+      ],
+      sourceUrl: "https://eqtgroup.com/about/motherbrain",
+      sourceLabel: "eqtgroup.com/motherbrain",
+    },
+    {
+      name: "Base10 Partners",
+      tagline: "Automation for the Real Economy · Seed to Series A",
+      badge: "Thesis-Driven",
+      approach: "Investing in AI That Automates $4T+ of the Economy",
+      desc: "Thesis-driven fund backing entrepreneurs automating traditional sectors — finance, healthcare, logistics, construction. Believes the AI platform shift will match the cloud platform shift in value creation.",
+      highlights: [
+        "30 investments in 2025 across automation-focused companies",
+        "Portfolio includes Figma (IPO 2025, $13.5B), Instacart ($8.3B), Brex",
+        "Focus on generative AI developer tools and infrastructure",
+        "Deep research published via base10.substack.com on AI market maps",
+      ],
+      sourceUrl: "https://base10.vc/insights/",
+      sourceLabel: "base10.vc/insights",
+    },
+    {
+      name: "Correlation Ventures",
+      tagline: "Quantitative co-investor · $365M AUM",
+      badge: "Algorithmic",
+      approach: "ML Model Trained on 100K+ VC Rounds",
+      desc: "Developed an in-house machine learning model trained on 100,000+ venture capital rounds. Analyzes pitch decks, team experience, board composition, and market signals to make investment decisions in under two weeks — sometimes under 24 hours.",
+      highlights: [
+        "Pure data-driven approach — removes 'gut feel' from investment decisions",
+        "Only invests in rounds where a lead investor is already present",
+        "Portfolio includes MosaicML (acquired by Databricks) and Upstart",
+        "Speed advantage: decisions in days vs. industry-standard weeks/months",
+      ],
+      sourceUrl: "https://aiexpert.network/ai-at-correlation-ventures/",
+      sourceLabel: "AIX Case Study",
+    },
+    {
+      name: "Goodwater Capital",
+      tagline: "World's largest consumer tech-focused VC · 18 unicorns",
+      badge: "Consumer AI",
+      approach: "Data-Driven Consumer Tech Investing",
+      desc: "Consumer-focused fund that uses proprietary data analysis to evaluate consumer technology companies. Recently invested in Trace (YC '25), a workflow orchestration startup helping enterprises scale AI agents.",
+      highlights: [
+        "26 investments in 2025, 5 investments already in early 2026",
+        "18 unicorns in portfolio including Zepto, Tide, and Toss Bank",
+        "Investing in AI agent adoption infrastructure (Trace, Level3 AI)",
+        "Multi-billion dollar funds exclusively focused on consumer technology",
+      ],
+      sourceUrl: "https://www.goodwatercap.com/",
+      sourceLabel: "goodwatercap.com",
+    },
+  ];
+
+  const section = document.createElement("div");
+  section.className = "vc-landscape";
+
+  // Header
+  const header = document.createElement("div");
+  header.className = "vc-landscape-header";
+  header.innerHTML = `
+    <div class="vc-landscape-title">How Other Funds Are Using AI</div>
+    <div class="vc-landscape-subtitle">A landscape view of how leading venture capital firms are deploying AI and automation across deal sourcing, due diligence, and portfolio management.</div>
+  `;
+  section.appendChild(header);
+
+  // Grid
+  const grid = document.createElement("div");
+  grid.className = "vc-grid";
+
+  firms.forEach(f => {
+    const panel = document.createElement("div");
+    panel.className = "vc-panel";
+
+    let html = `<div class="vc-panel-badge">${f.badge}</div>`;
+    html += `<div class="vc-panel-name">${f.name}</div>`;
+    html += `<div class="vc-panel-tagline">${f.tagline}</div>`;
+    html += `<div class="vc-panel-approach">${f.approach}</div>`;
+    html += `<div class="vc-panel-desc">${f.desc}</div>`;
+    html += `<div class="vc-panel-highlights">`;
+    f.highlights.forEach(h => {
+      html += `<div class="vc-panel-highlight"><span class="vc-panel-highlight-icon">→</span><span>${h}</span></div>`;
+    });
+    html += `</div>`;
+    html += `<div class="vc-panel-source"><a href="${f.sourceUrl}" target="_blank">${f.sourceLabel} ↗</a></div>`;
+
+    panel.innerHTML = html;
+    grid.appendChild(panel);
+  });
+
+  section.appendChild(grid);
+
+  // Insert into Section 5
+  const landscapeSection = document.getElementById("sec-landscape");
+  // Add section header
+  const sectionHeader = document.createElement("div");
+  sectionHeader.className = "page-section-header";
+  sectionHeader.innerHTML = `
+    <div class="page-section-num">Section 05</div>
+    <div class="page-section-title">Competitive Landscape</div>
+    <div class="page-section-subtitle">How leading venture capital firms are deploying AI and automation across deal sourcing, due diligence, and portfolio management.</div>
+  `;
+  landscapeSection.appendChild(sectionHeader);
+  landscapeSection.appendChild(section);
+})();
+
+// ─────────────────────────────────────────────
+//  SECTION NAV: smooth scroll + active state
+// ─────────────────────────────────────────────
+(function initSectionNav() {
+  const nav = document.getElementById("sectionNav");
+  const links = nav.querySelectorAll("a");
+  const sections = Array.from(links).map(a => document.getElementById(a.dataset.section));
+
+  // Smooth scroll on click
+  links.forEach(a => {
+    a.addEventListener("click", e => {
+      e.preventDefault();
+      const target = document.getElementById(a.dataset.section);
+      if (target) {
+        const navH = nav.offsetHeight;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - navH;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    });
+  });
+
+  // Update active link on scroll
+  function updateActive() {
+    const navH = nav.offsetHeight + 20;
+    let current = 0;
+    sections.forEach((sec, i) => {
+      if (sec && sec.getBoundingClientRect().top <= navH) current = i;
+    });
+    links.forEach((a, i) => a.classList.toggle("active", i === current));
+  }
+  window.addEventListener("scroll", updateActive, { passive: true });
+})();
+
+// ─────────────────────────────────────────────
+//  VERB MODAL — click a node in sections 3/4
+//  to see all matching tasks from section 2
+// ─────────────────────────────────────────────
+(function initVerbModal() {
+  const overlay = document.getElementById("verbModal");
+  const titleEl = document.getElementById("verbModalTitle");
+  const bodyEl  = document.getElementById("verbModalBody");
+  const closeBtn = document.getElementById("verbModalClose");
+
+  // Build a global index: verb → [{ task, desc, output, stage }]
+  const ALL_CATS = [...PIPELINE, ...SUPPORT];
+  const verbIndex = {};
+  ALL_CATS.forEach(cat => {
+    cat.tasks.forEach(t => {
+      const verb = t.task.split(" ")[0];
+      if (!verbIndex[verb]) verbIndex[verb] = [];
+      verbIndex[verb].push({ ...t, stage: cat.label, stageColor: cat.color });
+    });
+  });
+
+  function openModal(verb, icon) {
+    const tasks = verbIndex[verb] || [];
+    if (!tasks.length) return;
+
+    titleEl.innerHTML = `<span class="verb-icon">${icon}</span>${verb}<span class="verb-modal-count">${tasks.length} task${tasks.length !== 1 ? "s" : ""}</span>`;
+
+    bodyEl.innerHTML = "";
+    tasks.forEach(t => {
+      const card = document.createElement("div");
+      card.className = "verb-modal-card";
+      card.innerHTML = `
+        <div class="verb-modal-card-top">
+          <span class="verb-modal-card-title">${t.task}</span>
+          <span class="verb-modal-card-stage" style="background:${t.stageColor}">${t.stage}</span>
+          <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="verb-modal-card-body">
+          <div class="task-label">What you do</div>
+          <div class="task-desc">${t.desc}</div>
+          <div class="task-label" style="margin-top:12px">Output</div>
+          <div class="task-output">
+            <span class="output-icon">✅</span>
+            <span class="output-text">${t.output}</span>
+          </div>
+        </div>
+      `;
+      card.addEventListener("click", () => card.classList.toggle("expanded"));
+      bodyEl.appendChild(card);
+    });
+
+    overlay.classList.add("open");
+  }
+
+  function closeModal() {
+    overlay.classList.remove("open");
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeModal();
+  });
+
+  // Expose for network nodes to call
+  window._openVerbModal = openModal;
+})();
+</script>
+</body>
+</html>
