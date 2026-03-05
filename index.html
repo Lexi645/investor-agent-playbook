@@ -555,11 +555,22 @@
 
     /* ── WORKFLOW FLOW (dark theme) ── */
     .workflow-section {
-      max-width: 900px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 0 24px 60px;
       position: relative;
       z-index: 2;
+    }
+    .workflow-row {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .workflow-col {
+      flex: 1;
+      min-width: 400px;
+      max-width: 640px;
     }
     .workflow-section-label {
       text-align: center;
@@ -662,6 +673,26 @@
       font-size: 12px;
       color: var(--text2);
       margin-top: 3px;
+    }
+    .workflow-outputs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .workflow-skill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: #fff3ee;
+      border: 1px solid rgba(232,69,24,.2);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-top: 6px;
     }
 
     /* ── VC LANDSCAPE ── */
@@ -1810,73 +1841,130 @@ searchInput.addEventListener("input", () => {
 })();
 
 // ─────────────────────────────────────────────
-//  RESEARCH WORKFLOW (standalone section below radials)
+//  WORKFLOW EXAMPLES (side by side below radials)
 // ─────────────────────────────────────────────
-(function buildWorkflow() {
+(function buildWorkflows() {
   const container = document.getElementById("workflowSection");
   const agentSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7v1h1a1 1 0 110 2h-1v1a3 3 0 01-3 3H7a3 3 0 01-3-3v-1H3a1 1 0 110-2h1v-1a7 7 0 017-7h1V5.73A2 2 0 0112 2zM9 13a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>`;
+  const arrowSvg = `<svg width="50" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 50 24"><line x1="0" y1="12" x2="38" y2="12"/><polyline points="32,6 42,12 32,18"/></svg>`;
 
-  const flowLabel = document.createElement("div");
-  flowLabel.className = "workflow-section-label";
-  flowLabel.textContent = "Example: Agent Research Workflow";
-  container.appendChild(flowLabel);
+  function buildWorkflowCol(label, sources, outputs, skill) {
+    const col = document.createElement("div");
+    col.className = "workflow-col";
 
-  const diagram = document.createElement("div");
-  diagram.className = "workflow-diagram";
+    const flowLabel = document.createElement("div");
+    flowLabel.className = "workflow-section-label";
+    flowLabel.textContent = label;
+    col.appendChild(flowLabel);
 
-  // Hub
-  const hubNode = document.createElement("div");
-  hubNode.className = "workflow-node";
-  const hub = document.createElement("div");
-  hub.className = "workflow-hub-sm";
-  hub.innerHTML = agentSvg;
-  hubNode.appendChild(hub);
-  const hubLabel = document.createElement("div");
-  hubLabel.className = "workflow-hub-sm-label";
-  hubLabel.textContent = "Claude Desktop";
-  hubNode.appendChild(hubLabel);
-  diagram.appendChild(hubNode);
+    const diagram = document.createElement("div");
+    diagram.className = "workflow-diagram";
 
-  // Arrow
-  const arrow1 = document.createElement("div");
-  arrow1.className = "workflow-connector";
-  arrow1.innerHTML = `<svg width="50" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 50 24"><line x1="0" y1="12" x2="38" y2="12"/><polyline points="32,6 42,12 32,18"/></svg>`;
-  diagram.appendChild(arrow1);
+    // Hub
+    const hubNode = document.createElement("div");
+    hubNode.className = "workflow-node";
+    const hub = document.createElement("div");
+    hub.className = "workflow-hub-sm";
+    hub.innerHTML = agentSvg;
+    hubNode.appendChild(hub);
+    const hubLabel = document.createElement("div");
+    hubLabel.className = "workflow-hub-sm-label";
+    hubLabel.textContent = "Claude Desktop";
+    hubNode.appendChild(hubLabel);
+    if (skill) {
+      const badge = document.createElement("div");
+      badge.className = "workflow-skill-badge";
+      badge.textContent = skill;
+      hubNode.appendChild(badge);
+    }
+    diagram.appendChild(hubNode);
 
-  // Sources
-  const sources = [
-    { icon: "🎙️", name: "Fireflies" },
-    { icon: "📁", name: "Google Drive" },
-    { icon: "🔭", name: "Voyager" },
-    { icon: "🔍", name: "Web Search" },
-  ];
-  const sourcesCol = document.createElement("div");
-  sourcesCol.className = "workflow-sources";
-  sources.forEach(s => {
-    const src = document.createElement("div");
-    src.className = "workflow-source";
-    src.innerHTML = `<span class="workflow-source-icon">${s.icon}</span>${s.name}`;
-    sourcesCol.appendChild(src);
-  });
-  diagram.appendChild(sourcesCol);
+    // Arrow
+    const arrow1 = document.createElement("div");
+    arrow1.className = "workflow-connector";
+    arrow1.innerHTML = arrowSvg;
+    diagram.appendChild(arrow1);
 
-  // Arrow
-  const arrow2 = document.createElement("div");
-  arrow2.className = "workflow-connector";
-  arrow2.innerHTML = `<svg width="50" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 50 24"><line x1="0" y1="12" x2="38" y2="12"/><polyline points="32,6 42,12 32,18"/></svg>`;
-  diagram.appendChild(arrow2);
+    // Sources
+    const sourcesCol = document.createElement("div");
+    sourcesCol.className = "workflow-sources";
+    sources.forEach(s => {
+      const src = document.createElement("div");
+      src.className = "workflow-source";
+      src.innerHTML = `<span class="workflow-source-icon">${s.icon}</span>${s.name}`;
+      sourcesCol.appendChild(src);
+    });
+    diagram.appendChild(sourcesCol);
 
-  // Output
-  const outputBox = document.createElement("div");
-  outputBox.className = "workflow-output-box";
-  outputBox.innerHTML = `
-    <div class="workflow-output-icon">📄</div>
-    <div class="workflow-output-title">Synthesized Research Document</div>
-    <div class="workflow-output-sub">by Claude Code</div>
-  `;
-  diagram.appendChild(outputBox);
+    // Arrow
+    const arrow2 = document.createElement("div");
+    arrow2.className = "workflow-connector";
+    arrow2.innerHTML = arrowSvg;
+    diagram.appendChild(arrow2);
 
-  container.appendChild(diagram);
+    // Output(s)
+    if (outputs.length === 1) {
+      const outputBox = document.createElement("div");
+      outputBox.className = "workflow-output-box";
+      outputBox.innerHTML = `
+        <div class="workflow-output-icon">${outputs[0].icon}</div>
+        <div class="workflow-output-title">${outputs[0].title}</div>
+        ${outputs[0].sub ? `<div class="workflow-output-sub">${outputs[0].sub}</div>` : ""}
+      `;
+      diagram.appendChild(outputBox);
+    } else {
+      const outputsWrap = document.createElement("div");
+      outputsWrap.className = "workflow-outputs";
+      outputs.forEach(o => {
+        const outputBox = document.createElement("div");
+        outputBox.className = "workflow-output-box";
+        outputBox.innerHTML = `
+          <div class="workflow-output-icon">${o.icon}</div>
+          <div class="workflow-output-title">${o.title}</div>
+          ${o.sub ? `<div class="workflow-output-sub">${o.sub}</div>` : ""}
+        `;
+        outputsWrap.appendChild(outputBox);
+      });
+      diagram.appendChild(outputsWrap);
+    }
+
+    col.appendChild(diagram);
+    return col;
+  }
+
+  const row = document.createElement("div");
+  row.className = "workflow-row";
+
+  // Research workflow
+  row.appendChild(buildWorkflowCol(
+    "Example: Agent Research Workflow",
+    [
+      { icon: "🎙️", name: "Fireflies" },
+      { icon: "📁", name: "Google Drive" },
+      { icon: "🔭", name: "Voyager" },
+      { icon: "🔍", name: "Web Search" },
+    ],
+    [{ icon: "📄", title: "Synthesized Research Document", sub: "by Claude Code" }],
+    "Claude Skills"
+  ));
+
+  // Send workflow
+  row.appendChild(buildWorkflowCol(
+    "Example: Agent Send Workflow",
+    [
+      { icon: "🎙️", name: "Fireflies" },
+      { icon: "📁", name: "Google Drive" },
+      { icon: "🔭", name: "Voyager" },
+      { icon: "🔍", name: "Web Search" },
+    ],
+    [
+      { icon: "✉️", title: "Draft Email" },
+      { icon: "💬", title: "Draft LinkedIn Message" },
+    ],
+    "Claude Skills"
+  ));
+
+  container.appendChild(row);
 })();
 
 /* ── VC LANDSCAPE PANELS ── */
