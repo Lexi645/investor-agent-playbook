@@ -1202,6 +1202,7 @@ const PIPELINE = [
     desc: "Rapidly evaluate new opportunities to decide whether deeper diligence is warranted",
     tasks: [
       { task: "Build startup profile with relevant details and signals", desc: "Collect and structure key data points on a company—team background, funding history, market size, traction, recent news, and competitive positioning—from public sources, databases, and the pitch deck.", output: "Company record populated with details and signals in CRM." },
+      { task: "Build company score", desc: "Apply the fund's scoring criteria—founder quality, market size, product strength, traction, and defensibility—to generate a quantitative score that ranks the company against others in the pipeline.", output: "Company scored and ranked in CRM; priority level assigned." },
       { task: "Determine company priority", desc: "Decide whether the company warrants active pursuit, a watch list, or a pass based on thesis fit, signal strength, and current pipeline.", output: "Company marked as priority, watch, or pass; status updated in CRM." },
     ]
   },
